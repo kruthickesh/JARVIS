@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Voice Assistant Chat</title>
+    <style>
+        #chat-container {
+            width: 400px;
+            margin: 0 auto;
+        }
+        .message {
+            margin: 5px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+        .user-message {
+            text-align: right;
+            background-color: #d3e3fc;
+        }
+        .assistant-message {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<div id="chat-container">
+    <div id="chat-log"></div>
+    <button id="speak-button">Speak</button>
+</div>
+
+<script>
+    const chatLog = document.getElementById('chat-log');
+    const speakButton = document.getElementById('speak-button');
+
+    const synth = window.speechSynthesis;
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+        const result = event.results[0][0].transcript;
+        processUserInput(result);
+    };
+
+    speakButton.addEventListener('click', () => {
+        recognition.start();
+    });
+
+    function addMessageToChat(sender, message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${sender}-message`;
+        messageElement.textContent = message;
+        chatLog.appendChild(messageElement);
+        chatLog.scrollTop = chatLog.scrollHeight; // Scroll to the bottom
+    }
+
+    function speakMessage(message) {
+        const utterance = new SpeechSynthesisUtterance(message);
+        synth.speak(utterance);
+    }
+
+    function processUserInput(input) {
+        // Replace this with your actual voice assistant logic
+        const response = 'This is your voice assistant responding to: ' + input;
+        addMessageToChat('user', input);
+        setTimeout(() => {
+            addMessageToChat('assistant', response);
+            speakMessage(response);
+        }, 500); // Simulate a delay before the assistant responds
+    }
+</script>
+</body>
+</html>
